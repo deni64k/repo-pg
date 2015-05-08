@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"runtime/debug"
 	"strings"
+	"time"
 
 	"gopkg.in/pg.v3"
 )
@@ -103,8 +104,11 @@ func SelectOne(res interface{}, query string, args ...interface{}) error {
 		return err
 	}
 
-	_, err := db.QueryOne(res, query, args...)
-	h(err)
+	var err error
+	timeout(func() {
+		_, err = db.QueryOne(res, query, args...)
+		h(err)
+	})
 	return err
 }
 
@@ -118,8 +122,10 @@ func Select(res pg.Factory, query string, args ...interface{}) error {
 	if strings.Index(query, "SELECT") == -1 {
 		query = selectWhere(res, query)
 	}
-	_, err = db.Query(res, query, args...)
-	h(err)
+	timeout(func() {
+		_, err = db.Query(res, query, args...)
+		h(err)
+	})
 	return err
 }
 
@@ -164,4 +170,19 @@ func typeName(obj interface{}) string {
 	}
 
 	return name
+}
+
+func timeout(fn func()) {
+	c := make(chan bool, 1)
+	go func() {
+		fn()
+		c <- true
+	}()
+	select {
+	case res := <-c:
+		_ = res
+	case <-time.After(time.Millisecond * 500):
+		log.Println("pg timeout 1/2 seconds")
+		fn()
+	}
 }
