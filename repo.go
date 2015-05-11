@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/pg.v3"
+	"github.com/medvednikov/pg"
 )
 
 var (
