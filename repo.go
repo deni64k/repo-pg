@@ -117,7 +117,7 @@ func SelectOne(res interface{}, query string, args ...interface{}) error {
 // Example:
 // var users []*User
 // repo.Select(&users, "Age > 18")
-func Select(res pg.Factory, query string, args ...interface{}) error {
+func Select(res pg.Collection, query string, args ...interface{}) error {
 	var err error
 	if strings.Index(query, "SELECT") == -1 {
 		query = selectWhere(res, query)
