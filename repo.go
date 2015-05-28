@@ -129,6 +129,13 @@ func Select(res pg.Collection, query string, args ...interface{}) error {
 	return err
 }
 
+func SelectInt(query string, args ...interface{}) int {
+	var n int
+	_, err := db.QueryOne(pg.LoadInto(&n), query, args...)
+	h(err)
+	return n
+}
+
 func Update(query string, o interface{}) {
 	query = "UPDATE " + typeName(o) + " " + query + " WHERE id=?id"
 	fmt.Println("repo Update", query)
