@@ -44,11 +44,11 @@ func Insert(o interface{}) error {
 	query += strings.Join(cols, ",") + ") VALUES (" +
 		strings.Join(vals, ",") + ") RETURNING id"
 	// Fetch the ID and assign it to the object
-	id := &struct{ Id int }{0}
+	id := &struct{ ID int }{0}
 	res, err := db.QueryOne(id, query, o)
 	h(err)
 	val := reflect.ValueOf(o).Elem()
-	val.FieldByName("Id").SetInt(int64(id.Id))
+	val.FieldByName("ID").SetInt(int64(id.ID))
 	fmt.Println("repo.Insert "+query, "Res=", res)
 	return err
 }
