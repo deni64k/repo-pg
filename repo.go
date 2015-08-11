@@ -46,6 +46,7 @@ func Insert(o interface{}) error {
 	// Fetch the ID and assign it to the object
 	id := &struct{ ID int }{0}
 	res, err := db.QueryOne(id, query, o)
+	//log.Println("Q=", query)
 	h(err)
 	val := reflect.ValueOf(o).Elem()
 	val.FieldByName("ID").SetInt(int64(id.ID))
@@ -70,6 +71,11 @@ func UpdateFields(o interface{}, cols ...string) {
 
 func ExecOne(q string, args ...interface{}) {
 	_, err := db.ExecOne(q, args...)
+	h(err)
+}
+
+func Exec(q string, args ...interface{}) {
+	_, err := db.Exec(q, args...)
 	h(err)
 }
 
